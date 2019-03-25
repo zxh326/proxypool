@@ -12,6 +12,5 @@ type Proxy struct {
 }
 
 func (p *Proxy) IsAvailable() bool {
-
 	return false
 }

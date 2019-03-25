@@ -2,20 +2,50 @@ package main
 
 import (
 	"fmt"
+	"github.com/sparrc/go-ping"
 	"log"
 	"proxypool/proxy"
+	"sync"
+	"time"
 )
 
-func init() {
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
+func main() {
+	ch := make(chan *proxy.Proxy)
+
+	checkTime := time.NewTicker(time.Minute * 1)
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+	go func() {
+		for  {
+			fmt.Println("dddd")
+			go  proxy.A2uProvider(ch)
+			<- checkTime.C
+		}
+	}()
+
+	go func() {
+		for{
+			p := <- ch
+			go pings(p)
+		}
+	}()
+
+	wg.Wait()
+
 }
 
-func main() {
-	ch := make(chan proxy.Proxy)
-	go proxy.A2uProvider(ch)
-	go proxy.Data5uProvider(ch)
-
-	for value := range ch {
-		fmt.Println(value)
+func pings(proxy *proxy.Proxy) {
+	pinger, err := ping.NewPinger(proxy.Ip)
+	pinger.Count = 3
+	if err != nil {
+		fmt.Printf("ERROR: %s\n", err.Error())
+		return
 	}
+
+	pinger.OnFinish = func(stats *ping.Statistics) {
+		proxy.Latency = stats.AvgRtt.String()
+		log.Println(proxy)
+
+	}
+	pinger.Run()
 }
