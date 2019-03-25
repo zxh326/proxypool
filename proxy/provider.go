@@ -2,7 +2,7 @@ package proxy
 
 import (
 	"github.com/PuerkitoBio/goquery"
-	"io/ioutil"
+	"github.com/parnurzeal/gorequest"
 	"log"
 	"proxypool/pkg/http"
 	"regexp"
@@ -10,19 +10,22 @@ import (
 	"strings"
 )
 
+var request = gorequest.New()
+
+
 func A2uProvider(ch chan<- *Proxy) {
 	log.Printf("[%s]: provider crawler begin", "A2u")
 	url := "https://proxy.rudnkh.me/txt"
-	res := http.HttpHandle(url, "A2u")
-	if res.StatusCode != 200 {
-		log.Fatalf("[%s]: provider crawler : status code error: %d %s", "A2u", res.StatusCode, res.Status)
+	res, body, errs := request.Get(url).End()
+
+	if errs != nil {
+		log.Fatalf("[%s]: provider crawler error: %s", "A2u", errs)
 	}
 
-	responseData, _ := ioutil.ReadAll(res.Body)
 	defer res.Body.Close()
 	f, _ := regexp.Compile("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}:\\d{2,5}")
 
-	ress := f.FindAllString(string(responseData), 20)
+	ress := f.FindAllString(string(body), 20)
 	for _, value := range ress {
 		proxy := Proxy{}
 		ip := strings.Split(value, ":")
