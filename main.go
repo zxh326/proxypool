@@ -1,10 +1,12 @@
 package main
 
 import (
+	_ "github.com/mattn/go-sqlite3"
 	"os"
 	"os/signal"
 	"syscall"
 )
+
 
 func main() {
 

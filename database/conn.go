@@ -10,7 +10,8 @@ import (
 var Engine *xorm.Engine
 
 func init()  {
-	Engine, err := xorm.NewEngine("sqlite3", "./test.db")
+	var err error
+	Engine, err = xorm.NewEngine("sqlite3", "./test.db")
 
 	if err != nil{
 		log.Fatal("init database err", err)
@@ -22,7 +23,7 @@ func init()  {
 
 func doPingEngine(sleep time.Duration)  {
 	for {
-		_ = Engine.Ping()
 		time.Sleep(sleep)
+		_ = Engine.Ping()
 	}
 }

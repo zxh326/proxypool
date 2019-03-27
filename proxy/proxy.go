@@ -1,50 +1,33 @@
 package proxy
 
 import (
-	"fmt"
-	"github.com/sparrc/go-ping"
 	"log"
 	"proxypool/database"
 )
 
-func init()  {
-	_  = database.Engine.Sync(&Proxy{})
+func init() {
+
+	err := database.Engine.Sync2(&Proxy{})
+
+	if err != nil {
+		log.Fatal("sync database error", err)
+	}
 }
 
 type Proxy struct {
-	Ip       string
-	Port     string
-	Protocol string
-	Latency  string
+	ID       int64  `xorm:"pk autoincr"`
+	Ip       string `xorm:"NOT NULL"`
+	Port     string `xorm:"NOT NULL"`
+	Protocol string `xorm:"NOT NULL"`
+	Latency  string `xorm:"NULL"`
 
-	Level    int
-	UpdateAt string
-	refer    string
+	Level    int    `xorm:"NULL"`
+	UpdateAt string `xorm:"updated"`
+	Refer    string `xorm:"NOT NULL"`
 }
 
-//func (p *Proxy) IsAvailable()  bool {
-//	res, body, err := Request.Get("https://ip.cn/").Timeout(common.TimeOut).Proxy(p.Protocol+"://"+p.Ip+":"+p.Port).End()
-//	if err != nil {
-//		fmt.Println(err)
-//		return false
-//	}
-//
-//	fmt.Println(body, res.Body)
-//	return true
-//}
-
-func (p *Proxy) ping(count int)  {
-	pinger, err := ping.NewPinger(p.Ip)
-	pinger.Count = count
-	if err != nil {
-		fmt.Printf("ERROR: %s\n", err.Error())
-		return
-	}
-
-	pinger.OnFinish = func(stats *ping.Statistics) {
-		p.Latency = stats.AvgRtt.String()
-		log.Println(p)
-
-	}
-	pinger.Run()
+func Insert(proxy *Proxy) (err error) {
+	c, err := database.Engine.Insert(&proxy)
+	log.Println("insert ", c)
+	return
 }

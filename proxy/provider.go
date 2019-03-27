@@ -31,7 +31,7 @@ func A2uProvider(ch chan<- *Proxy) {
 		proxy.Ip = ip[0]
 		proxy.Port = ip[1]
 		proxy.Protocol = "http"
-		proxy.refer = "A2u"
+		proxy.Refer = "A2u"
 		ch <- &proxy
 	}
 	log.Printf("[%s] provider crawler done", "A2u")
@@ -63,7 +63,7 @@ func Data5uProvider(ch chan<- *Proxy) {
 			proxy.Ip = ip
 			proxy.Port = port
 			proxy.Protocol = protocol
-			proxy.refer = "Data5u"
+			proxy.Refer = "Data5u"
 			ch <- &proxy
 		}
 	})
