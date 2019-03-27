@@ -19,15 +19,19 @@ type Proxy struct {
 	Ip       string `xorm:"NOT NULL"`
 	Port     string `xorm:"NOT NULL"`
 	Protocol string `xorm:"NOT NULL"`
-	Latency  string `xorm:"NULL"`
+	Latency  string
 
-	Level    int    `xorm:"NULL"`
+	Level    int
 	UpdateAt string `xorm:"updated"`
 	Refer    string `xorm:"NOT NULL"`
 }
 
+func (p * Proxy) Url()  string {
+	return p.Protocol + "://" + p.Ip + ":" + p.Port
+}
+
 func Insert(proxy *Proxy) (err error) {
-	c, err := database.Engine.Insert(&proxy)
+	c, err := database.Engine.Insert(proxy)
 	log.Println("insert ", c)
 	return
 }

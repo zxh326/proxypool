@@ -2,7 +2,6 @@ package proxy
 
 import (
 	"github.com/PuerkitoBio/goquery"
-	"github.com/parnurzeal/gorequest"
 	"log"
 	"proxypool/common"
 	"regexp"
@@ -10,12 +9,10 @@ import (
 	"strings"
 )
 
-var Request = gorequest.New()
-
 func A2uProvider(ch chan<- *Proxy) {
 	log.Printf("[%s]: provider crawler begin", "A2u")
 	url := "https://proxy.rudnkh.me/txt"
-	res, body, errs := Request.Get(url).Set("User-Agent", common.UserAgent).End()
+	res, body, errs := common.Request.Get(url).End()
 
 	if errs != nil {
 		log.Fatalf("[%s]: provider crawler error: %s", "A2u", errs)
@@ -38,10 +35,10 @@ func A2uProvider(ch chan<- *Proxy) {
 }
 
 func Data5uProvider(ch chan<- *Proxy) {
-	url := "http://www.data5u.com/free/index.html"
 	log.Printf("[%s]: provider crawler begin", "Data5u")
-	res, _, errs := Request.Get(url).Set("User-Agent", common.UserAgent).Timeout(common.TimeOut).End()
-
+	url := "http://www.data5u.com/free/index.html"
+	res, _, errs := common.Request.Get(url).End()
+	log.Println(res)
 	if errs != nil {
 		log.Fatalf("[%s]: provider crawler error: %s", "Data5u", errs)
 	}

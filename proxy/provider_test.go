@@ -19,11 +19,11 @@ func TestA2uProvider(t *testing.T) {
 	proxy := <-ch
 	fmt.Println(proxy)
 
-	Insert(proxy)
+	//Insert(proxy)
 }
 
 func TestInsert(t *testing.T) {
-	proxy := Proxy{Ip:"123.233.233.233", Port:"8000", Protocol:"https", Level:0, }
+	proxy := Proxy{Ip:"123.233.233.233", Port:"8000", Protocol:"https", Level:0,Refer:"A" }
 
 	Insert(&proxy)
 }

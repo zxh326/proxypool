@@ -17,6 +17,7 @@ func init()  {
 		log.Fatal("init database err", err)
 	}
 
+	// 启动新线程定时激活sqlite
 	go doPingEngine(time.Minute * 5)
 
 }
