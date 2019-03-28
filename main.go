@@ -8,7 +8,6 @@ import (
 	"syscall"
 )
 
-
 func main() {
 	schedule.Start()
 	sigCh := make(chan os.Signal, 1)

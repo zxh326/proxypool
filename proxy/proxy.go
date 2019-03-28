@@ -26,7 +26,7 @@ type Proxy struct {
 	Refer    string `xorm:"NOT NULL"`
 }
 
-func (p * Proxy) Url()  string {
+func (p *Proxy) Url() string {
 	return p.Protocol + "://" + p.Ip + ":" + p.Port
 }
 

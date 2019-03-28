@@ -2,23 +2,31 @@ package proxy
 
 import (
 	"github.com/PuerkitoBio/goquery"
+	"github.com/parnurzeal/gorequest"
 	"log"
 	"proxypool/common"
 	"regexp"
 	"strconv"
 	"strings"
+
+	)
+
+var (
+	Request = gorequest.New()
 )
 
 func A2uProvider(ch chan<- *Proxy) {
 	log.Printf("[%s]: provider crawler begin", "A2u")
 	url := "https://proxy.rudnkh.me/txt"
-	res, body, errs := common.Request.Get(url).End()
+	res, body, errs := Request.Get(url).Set("User-Agent", common.UserAgent).Timeout(common.TimeOut).End()
 
 	if errs != nil {
 		log.Fatalf("[%s]: provider crawler error: %s", "A2u", errs)
 	}
+	if res.StatusCode!=200{
+		log.Printf("[%S] provider retun status code error %s","A2u", errs)
+	}
 
-	defer res.Body.Close()
 	f, _ := regexp.Compile("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}:\\d{2,5}")
 
 	ress := f.FindAllString(string(body), 20)
@@ -31,20 +39,23 @@ func A2uProvider(ch chan<- *Proxy) {
 		proxy.Refer = "A2u"
 		ch <- &proxy
 	}
+	defer res.Body.Close()
 	log.Printf("[%s] provider crawler done", "A2u")
 }
 
 func Data5uProvider(ch chan<- *Proxy) {
 	log.Printf("[%s]: provider crawler begin", "Data5u")
 	url := "http://www.data5u.com/free/index.html"
-	res, _, errs := common.Request.Get(url).End()
-	log.Println(res)
+	res, _, errs := Request.Get(url).Set("User-Agent", common.UserAgent).Timeout(common.TimeOut).End()
 	if errs != nil {
 		log.Fatalf("[%s]: provider crawler error: %s", "Data5u", errs)
 	}
 
+	if res.StatusCode!=200{
+		log.Printf("[%S] provider retun status code error %s","Data5u", errs)
+	}
+
 	doc, err := goquery.NewDocumentFromReader(res.Body)
-	defer res.Body.Close()
 	if err != nil {
 		log.Printf("[%s]: crawler error : parse html error: %v", "Data5u", err)
 		return
@@ -59,12 +70,14 @@ func Data5uProvider(ch chan<- *Proxy) {
 		if isIP.MatchString(ip) {
 			proxy.Ip = ip
 			proxy.Port = port
-			proxy.Protocol = protocol
+			proxy.Protocol = strings.ToLower(protocol)
 			proxy.Refer = "Data5u"
 			ch <- &proxy
+			log.Println(proxy)
 		}
 	})
 
+	defer res.Body.Close()
 	log.Printf("[%s]: provider crawler done", "Data5u")
 
 }
