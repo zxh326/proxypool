@@ -8,8 +8,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-
-	)
+)
 
 var (
 	Request = gorequest.New()
@@ -23,8 +22,8 @@ func A2uProvider(ch chan<- *Proxy) {
 	if errs != nil {
 		log.Fatalf("[%s]: provider crawler error: %s", "A2u", errs)
 	}
-	if res.StatusCode!=200{
-		log.Printf("[%S] provider retun status code error %s","A2u", errs)
+	if res.StatusCode != 200 {
+		log.Printf("[%s] provider retun status code error %s", "A2u", errs)
 	}
 
 	f, _ := regexp.Compile("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}:\\d{2,5}")
@@ -51,8 +50,8 @@ func Data5uProvider(ch chan<- *Proxy) {
 		log.Fatalf("[%s]: provider crawler error: %s", "Data5u", errs)
 	}
 
-	if res.StatusCode!=200{
-		log.Printf("[%S] provider retun status code error %s","Data5u", errs)
+	if res.StatusCode != 200 {
+		log.Printf("[%s] provider retun status code error %s", "Data5u", errs)
 	}
 
 	doc, err := goquery.NewDocumentFromReader(res.Body)

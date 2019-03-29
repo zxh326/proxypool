@@ -1,7 +1,6 @@
 package schedule
 
 import (
-	"fmt"
 	"log"
 	"proxypool/common"
 	"proxypool/proxy"
@@ -14,11 +13,10 @@ var (
 )
 
 func Start() {
-	go Policy()
-	go Valid()
-	go Sync()
+	//go Policy()
+	//go Valid()
+	//go Sync()
 }
-
 
 func Policy() {
 	timeTicker := time.NewTicker(common.NextValidTime)
@@ -31,12 +29,11 @@ func Policy() {
 
 }
 
-func Valid()  {
-	for ch := range UnValidPool  {
+func Valid() {
+	for ch := range UnValidPool {
 		go ProxyValid(ch)
 	}
 }
-
 
 func CrawlerJob() {
 	providers := []func(ch chan<- *proxy.Proxy){
@@ -58,9 +55,8 @@ func CrawlerJob() {
 	log.Println("crawler Job End....")
 }
 
-func Sync()  {
+func Sync() {
 	for p := range ValidPool {
-		//proxy.Insert(p)
-		fmt.Println(p)
+		_ = proxy.Insert(p)
 	}
 }
