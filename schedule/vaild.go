@@ -8,13 +8,13 @@ import (
 	"time"
 )
 
-//func init()  {
-//	// 用于网络监测, 同时检测代理地址是否有效
-//	_, _, err := gorequest.New().Get(common.VerifyUrl).End()
-//	if err != nil{
-//		log.Fatal(err)
-//	}
-//}
+func init()  {
+	// 用于网络监测, 同时检测代理地址是否有效
+	_, _, err := gorequest.New().Get(common.VerifyUrl).End()
+	if err != nil{
+		log.Fatal(err)
+	}
+}
 
 
 func ProxyValid(proxy *proxy.Proxy) bool {
