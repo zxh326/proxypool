@@ -8,6 +8,15 @@ import (
 	"time"
 )
 
+//func init()  {
+//	// 用于网络监测, 同时检测代理地址是否有效
+//	_, _, err := gorequest.New().Get(common.VerifyUrl).End()
+//	if err != nil{
+//		log.Fatal(err)
+//	}
+//}
+
+
 func ProxyValid(proxy *proxy.Proxy) bool {
 	var err []error
 	var validUrl string
@@ -29,14 +38,13 @@ func ProxyValid(proxy *proxy.Proxy) bool {
 		totalLatency += int(time.Now().Sub(begin).Nanoseconds() / 1000 / 1000)
 	}
 	if validCount == 0 {
-		log.Println("[proxy] ", proxy, " valid failed ", err)
 		if proxy.ID != 0{
 			InValidPool <- proxy
 		}
 
 		return false
 	}
-
+	log.Println("[proxy] valid one proxy success :", proxy.Url())
 	proxy.Latency = totalLatency / validCount
 	ValidPool <- proxy
 	return true

@@ -19,7 +19,7 @@ const (
 
 // 当代理池中可用代理数据量小于此数值时才会触发更新任务
 //
-const MinPoolNum = 50
+const MinPoolNum = 10
 
 
 // 更新操作的间隔时间，建议不超过此数值

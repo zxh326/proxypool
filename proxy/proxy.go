@@ -31,9 +31,17 @@ func (p *Proxy) Url() string {
 }
 
 func Insert(proxy *Proxy) (err error) {
-	if HasProxy(proxy) {
+	if proxy.ID != 0{
+		if HasProxyWithId(proxy) {
+			return Update(proxy)
+		}
+	}
+
+	if has, p := HasProxyWithIp(proxy); has{
+		proxy.ID = p.ID
 		return Update(proxy)
 	}
+
 	session := database.Engine.NewSession()
 	defer session.Close()
 
@@ -72,20 +80,28 @@ func Update(proxy *Proxy) (err error) {
 	_, err = session.ID(proxy.ID).Update(proxy)
 	if err != nil {
 		_ = session.Rollback()
-		log.Println("[db] delete one proxy error: ", proxy)
+		log.Println("[db] update one proxy error: ", proxy)
 		return
 	}
-	log.Println("[db] delete one invalid proxy: ", proxy)
 
 	return session.Commit()
 }
 
-func HasProxy(proxy *Proxy) (has bool) {
+func HasProxyWithId(proxy *Proxy) (has bool) {
 	p := GetOne(proxy.ID)
 	if p == nil {
 		return false
 	}
 	return true
+}
+
+func HasProxyWithIp(proxy *Proxy) (has bool, proxy2 *Proxy) {
+	proxy2 = GetOneWithIp(proxy.Ip)
+	if proxy2 == nil {
+		return false, proxy2
+	}
+
+	return true, proxy2
 }
 
 func Count() int64 {
@@ -101,9 +117,18 @@ func GetOne(id int64) *Proxy {
 	return nil
 }
 
+func GetOneWithIp(ip string) *Proxy {
+	tm := new(Proxy)
+	c, _ := database.Engine.Where("ip = ?", ip).Get(tm)
+	if c {
+		return tm
+	}
+	return nil
+}
+
 func GetAll(protocol ...string) (tm []*Proxy) {
 	if len(protocol) == 0 {
-		_ = database.Engine.Asc("Latency").Desc("create_at").Find(&tm)
+		_ = database.Engine.Asc("Latency").Desc("create_at").NoAutoCondition().Find(&tm)
 
 	} else {
 		_ = database.Engine.Asc("Latency").Desc("create_at").Where("protocol = ?", protocol[0]).Find(&tm)

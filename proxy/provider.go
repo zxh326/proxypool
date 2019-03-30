@@ -20,7 +20,7 @@ func A2uProvider(ch chan<- *Proxy) {
 	res, body, errs := Request.Get(url).Set("User-Agent", common.UserAgent).Timeout(common.TimeOut).End()
 
 	if errs != nil {
-		log.Fatalf("[Crawler] %s provider crawler error: %s", "A2u", errs)
+		log.Printf("[Crawler] %s provider crawler error: %s", "A2u", errs)
 	}
 	if res.StatusCode != 200 {
 		log.Printf("[Crawler] %s provider retun status code error %s", "A2u", errs)
@@ -47,7 +47,7 @@ func Data5uProvider(ch chan<- *Proxy) {
 	url := "http://www.data5u.com/free/index.html"
 	res, _, errs := Request.Get(url).Set("User-Agent", common.UserAgent).Timeout(common.TimeOut).Retry(3, common.TimeOut).End()
 	if errs != nil {
-		log.Fatalf("[Crawler] %s provider crawler error: %s", "Data5u", errs)
+		log.Printf("[Crawler] %s provider crawler error: %s", "Data5u", errs)
 	}
 
 	if res.StatusCode != 200 {
@@ -86,7 +86,7 @@ func LiuLiuProvider(ch chan<- *Proxy) {
 	res, body, errs := Request.Get(url).Set("User-Agent", common.UserAgent).Timeout(common.TimeOut).End()
 
 	if errs != nil {
-		log.Fatalf("[Crawler] %s provider crawler error: %s", "66Ip", errs)
+		log.Printf("[Crawler] %s provider crawler error: %s", "66Ip", errs)
 	}
 	if res.StatusCode != 200 {
 		log.Printf("[Crawler] %s provider retun status code error %s", "66Ip", errs)
