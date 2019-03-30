@@ -22,14 +22,25 @@ func TestA2uProvider(t *testing.T) {
 	fmt.Println(proxy)
 }
 
+func TestLiuLiuProvider(t *testing.T) {
+	go LiuLiuProvider(ch)
+	proxy := <-ch
+	fmt.Println(proxy)
+}
+
+func TestHasProxy(t *testing.T) {
+	proxy := Proxy{ID:233, Ip: "123.233.233.233", Port: "8001", Protocol: "https", Level: 0, Refer: "A"}
+	assert.Equal(t, HasProxy(&proxy), false)
+}
+
 func TestInsertAndDelete(t *testing.T) {
-	proxy := Proxy{Ip: "123.233.233.233", Port: "8000", Protocol: "https", Level: 0, Refer: "A"}
+	proxy := Proxy{ID:2, Ip: "123.233.233.233", Port: "8001", Protocol: "https", Level: 0, Refer: "A"}
 
 	Insert(&proxy)
 
 	assert.Equal(t, proxy.Ip, GetOne(proxy.ID).Ip)
 
-	Delete(&proxy)
+	//Delete(&proxy)
 }
 
 func TestCheckServer(t *testing.T) {
@@ -43,8 +54,3 @@ func TestCheckServer(t *testing.T) {
 	}
 	fmt.Println("tcp server is ok")
 }
-
-//func TestOther(t *testing.T) {
-//	GetSomething(1, 2, 3)
-//
-//}

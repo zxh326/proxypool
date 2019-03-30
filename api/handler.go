@@ -21,7 +21,7 @@ func testHandler(w http.ResponseWriter, r *http.Request) {
 	apis := []string{
 		"/",
 		"/api/proxy",
-		"/api/count",
+		"/api/proxy/count",
 	}
 
 	js, err := json.Marshal(apis)

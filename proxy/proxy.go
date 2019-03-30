@@ -1,7 +1,6 @@
 package proxy
 
 import (
-	"fmt"
 	"log"
 	"proxypool/database"
 )
@@ -20,10 +19,10 @@ type Proxy struct {
 	Ip       string `xorm:"NOT NULL"`
 	Port     string `xorm:"NOT NULL"`
 	Protocol string `xorm:"NOT NULL"`
-	Latency  string
+	Latency  int
 
 	Level    int
-	UpdateAt string `xorm:"updated"`
+	CreateAt string `xorm:"created"`
 	Refer    string `xorm:"NOT NULL"`
 }
 
@@ -32,6 +31,9 @@ func (p *Proxy) Url() string {
 }
 
 func Insert(proxy *Proxy) (err error) {
+	if HasProxy(proxy) {
+		return Update(proxy)
+	}
 	session := database.Engine.NewSession()
 	defer session.Close()
 
@@ -40,7 +42,7 @@ func Insert(proxy *Proxy) (err error) {
 	_, err = session.Insert(proxy)
 	if err != nil {
 		_ = session.Rollback()
-		log.Println("[db] insert one proxy error: ", proxy)
+		log.Println("[db] insert one proxy error: ", proxy, err)
 		return
 	}
 	return session.Commit()
@@ -62,24 +64,49 @@ func Delete(proxy *Proxy) (err error) {
 	return session.Commit()
 }
 
+func Update(proxy *Proxy) (err error) {
+	session := database.Engine.NewSession()
+	defer session.Close()
+
+	err = session.Begin()
+	_, err = session.ID(proxy.ID).Update(proxy)
+	if err != nil {
+		_ = session.Rollback()
+		log.Println("[db] delete one proxy error: ", proxy)
+		return
+	}
+	log.Println("[db] delete one invalid proxy: ", proxy)
+
+	return session.Commit()
+}
+
+func HasProxy(proxy *Proxy) (has bool) {
+	p := GetOne(proxy.ID)
+	if p == nil {
+		return false
+	}
+	return true
+}
+
 func Count() int64 {
 	return int64(len(GetAll()))
 }
 
-
 func GetOne(id int64) *Proxy {
 	tm := new(Proxy)
 	c, _ := database.Engine.ID(id).Get(tm)
-	fmt.Println(c)
-	return tm
+	if c {
+		return tm
+	}
+	return nil
 }
 
 func GetAll(protocol ...string) (tm []*Proxy) {
-	if len(protocol) == 0{
-		_ = database.Engine.Desc("update_at").Asc("Latency").Find(&tm)
+	if len(protocol) == 0 {
+		_ = database.Engine.Asc("Latency").Desc("create_at").Find(&tm)
 
-	}else{
-		_ = database.Engine.Desc("update_at").Asc("Latency").Where("protocol = ?", protocol[0]).Find(&tm)
+	} else {
+		_ = database.Engine.Asc("Latency").Desc("create_at").Where("protocol = ?", protocol[0]).Find(&tm)
 	}
 	return
 }

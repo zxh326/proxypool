@@ -43,9 +43,9 @@ func A2uProvider(ch chan<- *Proxy) {
 }
 
 func Data5uProvider(ch chan<- *Proxy) {
-	log.Printf("[%s]: provider crawler begin", "Data5u")
+	log.Printf("[Crawler] %s provider crawler begin", "Data5u")
 	url := "http://www.data5u.com/free/index.html"
-	res, _, errs := Request.Get(url).Set("User-Agent", common.UserAgent).Timeout(common.TimeOut).End()
+	res, _, errs := Request.Get(url).Set("User-Agent", common.UserAgent).Timeout(common.TimeOut).Retry(3, common.TimeOut).End()
 	if errs != nil {
 		log.Fatalf("[Crawler] %s provider crawler error: %s", "Data5u", errs)
 	}
@@ -72,11 +72,38 @@ func Data5uProvider(ch chan<- *Proxy) {
 			proxy.Protocol = strings.ToLower(protocol)
 			proxy.Refer = "Data5u"
 			ch <- &proxy
-			log.Println(proxy)
 		}
 	})
 
 	defer res.Body.Close()
 	log.Printf("[Crawler] %s provider crawler done", "Data5u")
 
+}
+
+func LiuLiuProvider(ch chan<- *Proxy) {
+	log.Printf("[Crawler] %s provider crawler begin", "66Ip")
+	url := "http://www.66ip.cn/mo.php?tqsl=100"
+	res, body, errs := Request.Get(url).Set("User-Agent", common.UserAgent).Timeout(common.TimeOut).End()
+
+	if errs != nil {
+		log.Fatalf("[Crawler] %s provider crawler error: %s", "66Ip", errs)
+	}
+	if res.StatusCode != 200 {
+		log.Printf("[Crawler] %s provider retun status code error %s", "66Ip", errs)
+	}
+
+	f, _ := regexp.Compile("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}:\\d{2,5}")
+
+	ress := f.FindAllString(string(body), 20)
+	for _, value := range ress {
+		proxy := Proxy{}
+		ip := strings.Split(value, ":")
+		proxy.Ip = ip[0]
+		proxy.Port = ip[1]
+		proxy.Protocol = "http"
+		proxy.Refer = "66Ip"
+		ch <- &proxy
+	}
+	defer res.Body.Close()
+	log.Printf("[Crawler] %s provider crawler done", "66Ip")
 }

@@ -4,12 +4,14 @@ import (
 	"log"
 	"proxypool/common"
 	"proxypool/proxy"
+	"sync"
 	"time"
 )
 
 var (
 	UnValidPool = make(chan *proxy.Proxy, 30)
 	ValidPool   = make(chan *proxy.Proxy, 30)
+	InValidPool = make(chan *proxy.Proxy, 30)
 )
 
 func Start() {
@@ -23,7 +25,19 @@ func Policy() {
 
 	for {
 		// TODO policy
-		CrawlerJob()
+		var wg = sync.WaitGroup{}
+		for _, p := range proxy.GetAll() {
+			wg.Add(1)
+			go func(p *proxy.Proxy) {
+				ProxyValid(p)
+				wg.Done()
+			}(p)
+		}
+		wg.Wait()
+
+		if proxy.Count() <= common.MinPoolNum {
+			CrawlerJob()
+		}
 		<-timeTicker.C
 	}
 
@@ -39,24 +53,29 @@ func CrawlerJob() {
 	providers := []func(ch chan<- *proxy.Proxy){
 		proxy.Data5uProvider,
 		proxy.A2uProvider,
+		proxy.LiuLiuProvider,
 	}
 
 	log.Println("[crawler Job Begin]....")
-	//var wg = sync.WaitGroup{}
 	for _, providers := range providers {
-		//wg.Add(1)
-		//go func(f func(ch chan<- *proxy.Proxy)) {
-		//	f(UnValidPool)
-		//	wg.Done()
-		//}(providers)
 		providers(UnValidPool)
 	}
-	//wg.Wait()
 	log.Println("[crawler Job End]....")
 }
 
 func Sync() {
-	for p := range ValidPool {
-		_ = proxy.Insert(p)
-	}
+	var wg = sync.WaitGroup{}
+	wg.Add(2)
+	go func() {
+		for p := range ValidPool {
+			_ = proxy.Insert(p)
+		}
+	}()
+
+	go func() {
+		for p := range InValidPool {
+			_ = proxy.Delete(p)
+		}
+	}()
+	wg.Wait()
 }

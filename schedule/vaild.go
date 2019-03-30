@@ -5,29 +5,39 @@ import (
 	"log"
 	"proxypool/common"
 	"proxypool/proxy"
-	"strconv"
 	"time"
 )
 
 func ProxyValid(proxy *proxy.Proxy) bool {
+	var err []error
 	var validUrl string
+	var validCount, totalLatency =  common.ValidCount, 0
+
 	if proxy.Protocol == "https" {
 		validUrl = common.VerifyHttpsUrl
 	} else {
 		validUrl = common.VerifyUrl
 	}
 
-	begin := time.Now()
-	res, _, err := gorequest.New().Proxy(proxy.Url()).Get(validUrl).Timeout(common.ValidTimeOut).End()
-	if err != nil {
-		log.Println("[proxy] ", proxy, " valid failed")
+	for i := 0; i < common.ValidCount; i++ {
+		begin := time.Now()
+		_, _, err = gorequest.New().Proxy(proxy.Url()).Get(validUrl).Timeout(common.ValidTimeOut).End()
+		if err != nil {
+			validCount--
+			continue
+		}
+		totalLatency += int(time.Now().Sub(begin).Nanoseconds() / 1000 / 1000)
+	}
+	if validCount == 0 {
+		log.Println("[proxy] ", proxy, " valid failed ", err)
+		if proxy.ID != 0{
+			InValidPool <- proxy
+		}
+
 		return false
 	}
-	if res.StatusCode == 200 {
-		proxy.Latency = strconv.Itoa(int(time.Now().Sub(begin).Nanoseconds()/1000/1000)) + "ms"
-		ValidPool <- proxy
-		return true
-	}
-	defer res.Body.Close()
-	return false
+
+	proxy.Latency = totalLatency / validCount
+	ValidPool <- proxy
+	return true
 }

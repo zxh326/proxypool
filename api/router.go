@@ -14,7 +14,7 @@ func (s *server) listen (port string)  {
 	mux := http.NewServeMux()
 	mux.Handle("/", loggingHandler(http.HandlerFunc(testHandler)))
 	mux.Handle("/api/proxy", loggingHandler(http.HandlerFunc(allProxy)))
-	mux.Handle("/api/count", loggingHandler(http.HandlerFunc(countProxy)))
+	mux.Handle("/api/proxy/count", loggingHandler(http.HandlerFunc(countProxy)))
 	_ = http.ListenAndServe(port, mux)
 }
 
