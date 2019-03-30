@@ -13,9 +13,9 @@ var (
 )
 
 func Start() {
-	//go Policy()
-	//go Valid()
-	//go Sync()
+	go Policy()
+	go Valid()
+	go Sync()
 }
 
 func Policy() {
@@ -41,7 +41,7 @@ func CrawlerJob() {
 		proxy.A2uProvider,
 	}
 
-	log.Println("crawler Job Begin....")
+	log.Println("[crawler Job Begin]....")
 	//var wg = sync.WaitGroup{}
 	for _, providers := range providers {
 		//wg.Add(1)
@@ -52,7 +52,7 @@ func CrawlerJob() {
 		providers(UnValidPool)
 	}
 	//wg.Wait()
-	log.Println("crawler Job End....")
+	log.Println("[crawler Job End]....")
 }
 
 func Sync() {

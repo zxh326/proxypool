@@ -20,7 +20,7 @@ func ProxyValid(proxy *proxy.Proxy) bool {
 	begin := time.Now()
 	res, _, err := gorequest.New().Proxy(proxy.Url()).Get(validUrl).Timeout(common.ValidTimeOut).End()
 	if err != nil {
-		log.Println("proxy ", proxy, " valid error")
+		log.Println("[proxy] ", proxy, " valid failed")
 		return false
 	}
 	if res.StatusCode == 200 {

@@ -40,7 +40,7 @@ func Insert(proxy *Proxy) (err error) {
 	_, err = session.Insert(proxy)
 	if err != nil {
 		_ = session.Rollback()
-		log.Println("insert one proxy error: ", proxy)
+		log.Println("[db] insert one proxy error: ", proxy)
 		return
 	}
 	return session.Commit()
@@ -54,10 +54,10 @@ func Delete(proxy *Proxy) (err error) {
 	_, err = session.ID(proxy.ID).Delete(proxy)
 	if err != nil {
 		_ = session.Rollback()
-		log.Println("delete one proxy error: ", proxy)
+		log.Println("[db] delete one proxy error: ", proxy)
 		return
 	}
-	log.Println("delete one invalid proxy: ", proxy)
+	log.Println("[db] delete one invalid proxy: ", proxy)
 
 	return session.Commit()
 }
@@ -76,10 +76,10 @@ func GetOne(id int64) *Proxy {
 
 func GetAll(protocol ...string) (tm []*Proxy) {
 	if len(protocol) == 0{
-		_ = database.Engine.Asc("Latency").Desc("update_at").Find(&tm)
+		_ = database.Engine.Desc("update_at").Asc("Latency").Find(&tm)
 
 	}else{
-		_ = database.Engine.Asc("Latency").Desc("update_at").Where("protocol = ?", protocol[0]).Find(&tm)
+		_ = database.Engine.Desc("update_at").Asc("Latency").Where("protocol = ?", protocol[0]).Find(&tm)
 	}
 	return
 }
