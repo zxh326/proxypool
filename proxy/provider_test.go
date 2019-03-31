@@ -29,12 +29,12 @@ func TestLiuLiuProvider(t *testing.T) {
 }
 
 func TestHasProxy(t *testing.T) {
-	proxy := Proxy{ID:233, Ip: "123.233.233.233", Port: "8001", Protocol: "https", Level: 0, Refer: "A"}
+	proxy := Proxy{ID: 233, Ip: "123.233.233.233", Port: "8001", Protocol: "https", Level: 0, Refer: "A"}
 	assert.Equal(t, HasProxyWithId(&proxy), false)
 }
 
 func TestInsertAndDelete(t *testing.T) {
-	proxy := Proxy{ID:2, Ip: "123.233.233.233", Port: "8001", Protocol: "https", Level: 0, Refer: "A"}
+	proxy := Proxy{ID: 2, Ip: "123.233.233.233", Port: "8001", Protocol: "https", Level: 0, Refer: "A"}
 
 	Insert(&proxy)
 

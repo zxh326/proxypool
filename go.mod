@@ -1,4 +1,4 @@
-module proxypool
+module github.com/zxh326/proxypool
 
 go 1.12.1
 

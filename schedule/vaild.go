@@ -2,25 +2,24 @@ package schedule
 
 import (
 	"github.com/parnurzeal/gorequest"
+	"github.com/zxh326/proxypool/common"
+	"github.com/zxh326/proxypool/proxy"
 	"log"
-	"proxypool/common"
-	"proxypool/proxy"
 	"time"
 )
 
-func init()  {
+func init() {
 	// 用于网络监测, 同时检测代理地址是否有效
 	_, _, err := gorequest.New().Get(common.VerifyUrl).End()
-	if err != nil{
+	if err != nil {
 		log.Fatal(err)
 	}
 }
 
-
 func ProxyValid(proxy *proxy.Proxy) bool {
 	var err []error
 	var validUrl string
-	var validCount, totalLatency =  common.ValidCount, 0
+	var validCount, totalLatency = common.ValidCount, 0
 
 	if proxy.Protocol == "https" {
 		validUrl = common.VerifyHttpsUrl
@@ -38,7 +37,7 @@ func ProxyValid(proxy *proxy.Proxy) bool {
 		totalLatency += int(time.Now().Sub(begin).Nanoseconds() / 1000 / 1000)
 	}
 	if validCount == 0 {
-		if proxy.ID != 0{
+		if proxy.ID != 0 {
 			InValidPool <- proxy
 		}
 

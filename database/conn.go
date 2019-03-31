@@ -12,7 +12,7 @@ var Engine *xorm.Engine
 func init() {
 	var err error
 	Engine, err = xorm.NewEngine("sqlite3", "./test.db")
-	Engine.ShowSQL(true)
+	Engine.ShowSQL(false)
 	cacher := xorm.NewLRUCacher(xorm.NewMemoryStore(), 1000)
 	Engine.SetDefaultCacher(cacher)
 	Engine.DatabaseTZ = time.Local

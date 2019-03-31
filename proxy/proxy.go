@@ -1,8 +1,8 @@
 package proxy
 
 import (
+	"github.com/zxh326/proxypool/database"
 	"log"
-	"proxypool/database"
 )
 
 func init() {
@@ -31,13 +31,13 @@ func (p *Proxy) Url() string {
 }
 
 func Insert(proxy *Proxy) (err error) {
-	if proxy.ID != 0{
+	if proxy.ID != 0 {
 		if HasProxyWithId(proxy) {
 			return Update(proxy)
 		}
 	}
 
-	if has, p := HasProxyWithIp(proxy); has{
+	if has, p := HasProxyWithIp(proxy); has {
 		proxy.ID = p.ID
 		return Update(proxy)
 	}

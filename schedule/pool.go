@@ -1,9 +1,9 @@
 package schedule
 
 import (
+	"github.com/zxh326/proxypool/common"
+	"github.com/zxh326/proxypool/proxy"
 	"log"
-	"proxypool/common"
-	"proxypool/proxy"
 	"sync"
 	"time"
 )

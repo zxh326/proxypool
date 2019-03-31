@@ -1,10 +1,10 @@
 package main
 
 import (
+	"github.com/zxh326/proxypool/api"
+	"github.com/zxh326/proxypool/schedule"
 	"os"
 	"os/signal"
-	"proxypool/api"
-	"proxypool/schedule"
 	"syscall"
 )
 

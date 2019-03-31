@@ -2,10 +2,9 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
+	"github.com/zxh326/proxypool/proxy"
 	"log"
 	"net/http"
-	"proxypool/proxy"
 	"time"
 )
 
@@ -43,14 +42,13 @@ func allProxy(w http.ResponseWriter, r *http.Request) {
 	var res []*proxy.Proxy
 
 	if has {
-		if va[0] == "https"{
+		if va[0] == "https" {
 			protocol = va[0]
 		}
 		res = proxy.GetAll(protocol)
-	}else{
+	} else {
 		res = proxy.GetAll()
 	}
-	fmt.Println(res)
 
 	js, err := json.Marshal(res)
 	if err != nil {
