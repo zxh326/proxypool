@@ -2,6 +2,11 @@
 
 > 基于Go语言实现的代理池
 
+[![Build Status](https://travis-ci.com/zxh326/proxypool.svg?token=dSTB74Ayn9yR3XY9qzQq&branch=master)](https://travis-ci.com/zxh326/proxypool)
+[![Docker Build Status](https://img.shields.io/docker/cloud/build/zzde/proxypool.svg)](https://hub.docker.com/r/zzde/proxypool/)
+[![release](https://img.shields.io/github/release/zxh326/proxypool.svg)](https://github.com/zxh326/proxypool/releases)
+[![Go Report Card](https://goreportcard.com/badge/github.com/zxh326/proxypool)](https://goreportcard.com/report/github.com/zxh326/proxypool)
+
 ## Design
 - Api 
     * 使用 net/http 提供服务
