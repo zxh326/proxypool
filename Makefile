@@ -2,7 +2,7 @@ NAME=proxypool
 BINDIR=bin
 VERSION=$(shell git describe --tags --long --dirty || echo "unkown version")
 BUILDTIME=$(shell date -u)
-GOBUILD=CGO_ENABLED=1 go build -ldflags="-s -w" -installsuffix cgo -o app main.go
+GOBUILD=CGO_ENABLED=1 go build -ldflags="-s -w"
 
 PLATFORM_LIST = \
 	darwin-amd64 \
