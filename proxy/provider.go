@@ -10,7 +10,6 @@ import (
 	"strings"
 )
 
-
 func A2uProvider(ch chan<- *Proxy) {
 	log.Printf("[Crawler] %s provider crawler begin", "A2u")
 	url := "https://proxy.rudnkh.me/txt"

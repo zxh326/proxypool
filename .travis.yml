@@ -9,3 +9,16 @@ env:
     - GO111MODULE=on
 script:
   - go test ./...
+before_deploy: make -j releases
+deploy:
+  provider: releases
+  prerelease: false
+  skip_cleanup: true
+  api_key:
+    secure: $ack
+  file: bin/*
+  file_glob: true
+  on:
+    repo: zxh326/proxypool
+    branch: master
+    tags: true
