@@ -8,7 +8,8 @@ require (
 	github.com/go-xorm/xorm v0.7.1
 	github.com/mattn/go-sqlite3 v1.9.0
 	github.com/moul/http2curl v1.0.0 // indirect
-	github.com/parnurzeal/gorequest v0.2.15
+	github.com/parnurzeal/gorequest v0.2.16
 	github.com/pkg/errors v0.8.1 // indirect
 	github.com/stretchr/testify v1.2.2
+	moul.io/http2curl v1.0.0 // indirect
 )
